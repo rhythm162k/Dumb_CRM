@@ -10,7 +10,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-ISC-lightgrey)](LICENSE)
 
-**[Live Demo](https://dumb-crm-ngei.onrender.com) · [Report a Bug](https://github.com/rhythm162k/Dumb_CRM/issues) · [Request a Feature](https://github.com/rhythm162k/Dumb_CRM/issues)**
+**[Live Demo](https://dumb-crm-bjby.onrender.com) · [Report a Bug](https://github.com/rhythm162k/Dumb_CRM/issues) · [Request a Feature](https://github.com/rhythm162k/Dumb_CRM/issues)**
 
 </div>
 
