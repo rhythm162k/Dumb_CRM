@@ -1,0 +1,108 @@
+/*
+  Dialogs. Phones: a bottom sheet. From sm: a centred card.
+  Open and close are transitions on the dialog itself (@starting-style + allow-discrete), so the
+  close animation plays too. Modal and ConfirmDialog in ui.tsx wait for it before unmounting.
+*/
+@layer components {
+  .ui-modal {
+    --ui-modal-shift: 2.5rem;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: calc(100dvh - var(--s-8) - env(safe-area-inset-top));
+    margin: auto 0 0;
+    padding: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    color: var(--ink);
+    background: var(--surface);
+    border: 0;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    box-shadow: var(--shadow-3);
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--dur) var(--ease-out),
+      transform var(--dur) var(--ease-out),
+      overlay var(--dur) allow-discrete,
+      display var(--dur) allow-discrete;
+  }
+  /* closed (and closing) state */
+  .ui-modal:not([open]) {
+    opacity: 0;
+    transform: translateY(var(--ui-modal-shift));
+  }
+  @starting-style {
+    .ui-modal[open] {
+      opacity: 0;
+      transform: translateY(var(--ui-modal-shift));
+    }
+  }
+
+  .ui-modal::backdrop {
+    /* literal colour on purpose: ::backdrop does not inherit custom properties in older browsers */
+    background: rgb(0 0 0 / 0.45);
+    opacity: 1;
+    transition:
+      opacity var(--dur, 200ms) var(--ease-out, ease-out),
+      overlay var(--dur, 200ms) allow-discrete,
+      display var(--dur, 200ms) allow-discrete;
+  }
+  .ui-modal:not([open])::backdrop {
+    opacity: 0;
+  }
+  @starting-style {
+    .ui-modal[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .ui-modal__body {
+    container: ui-sheet / inline-size;
+    padding: var(--s-4);
+    padding-bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
+  }
+  .ui-modal__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s-4);
+    margin-bottom: var(--s-4);
+  }
+  .ui-modal__head h2 {
+    margin: 0;
+    font-size: var(--text-lg);
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+  .ui-modal__text {
+    margin: 0 0 var(--s-4);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  @media (min-width: 40rem) {
+    .ui-modal {
+      --ui-modal-shift: 1rem;
+      width: min(32rem, calc(100vw - 2rem));
+      max-height: calc(100dvh - 2rem);
+      margin: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+    }
+    .ui-modal__body {
+      padding: var(--s-6);
+    }
+  }
+  @media (min-width: 64rem) {
+    .ui-modal {
+      width: min(36rem, calc(100vw - 4rem));
+    }
+  }
+  /* small dialog (confirm): after the width rules above so it wins */
+  @media (min-width: 40rem) {
+    .ui-modal--sm {
+      width: min(24rem, calc(100vw - 2rem));
+    }
+  }
+}

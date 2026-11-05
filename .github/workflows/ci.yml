@@ -1,0 +1,37 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: crm
+          POSTGRES_PASSWORD: crm
+          POSTGRES_DB: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U crm" --health-interval 5s
+          --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://crm:crm@localhost:5432/crm_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Audit (production deps)
+        # fails on any high/critical advisory except the documented, expiring exceptions in the script
+        run: |
+          npm audit --omit=dev --json > audit.json || true
+          node scripts/audit-gate.mjs audit.json
+      - name: Build API image
+        run: docker build -f apps/api/Dockerfile -t crm-api:ci .

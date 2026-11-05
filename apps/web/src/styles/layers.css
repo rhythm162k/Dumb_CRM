@@ -1,0 +1,6 @@
+/*
+  Cascade layer order. This file is imported first (main.tsx), so the order below is fixed
+  for the whole app. A rule in a later layer beats a rule in an earlier layer no matter how
+  specific the selectors are, so conflicts are settled by layer, never by !important.
+*/
+@layer reset, tokens, base, components, pages;

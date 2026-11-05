@@ -1,0 +1,173 @@
+/*
+  Activity timeline shown inside contact and deal dialogs (prefix activity-).
+  Each entry sits in an .activity-slot: a new entry fades in and rises, a deleted one fades out and
+  collapses (grid-template-rows 1fr -> 0fr is the one place layout is animated, as on the deals board).
+*/
+@layer pages {
+  .activity-timeline {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .activity-timeline h3 {
+    margin: 0 0 0.75rem;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+  }
+  .activity-composer {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  .activity-composer__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+  @container ui-sheet (min-width: 28rem) {
+    .activity-composer__row {
+      grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+    }
+    .activity-composer__row:has(> :only-child) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .activity-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .activity-slot {
+    display: grid;
+    grid-template-rows: 1fr;
+  }
+  /* the gap between entries lives here, so it collapses together with the entry */
+  .activity-slot__inner {
+    min-height: 0;
+    padding-bottom: var(--s-3);
+  }
+  .activity-slot:last-child > .activity-slot__inner {
+    padding-bottom: 0;
+  }
+  .activity-slot[data-enter] {
+    animation: activity-in var(--dur) var(--ease-out) backwards;
+  }
+  .activity-slot[data-state='leaving'] {
+    pointer-events: none;
+    animation: activity-leave var(--dur-slow) var(--ease-out) both;
+  }
+  .activity-slot[data-state='leaving'] > .activity-slot__inner {
+    overflow: hidden;
+  }
+
+  .activity-item {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-1);
+  }
+  .activity-main {
+    min-width: 0;
+    transition: opacity var(--dur) var(--ease-out);
+  }
+  /* a finished task settles back: struck through and faded */
+  .activity-item[data-done='true'] .activity-main {
+    opacity: 0.65;
+  }
+  .activity-item[data-done='true'] .activity-body {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+  .activity-check-box {
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .activity-check {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0.15rem 0 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  /* keeps the first grid column filled on rows without a checkbox */
+  .activity-check-spacer {
+    display: block;
+  }
+  /* touch: the label around the checkbox grows into the item's padding to make a 44px target */
+  @media (pointer: coarse) {
+    .activity-check-box {
+      width: 2.75rem;
+      height: 2.75rem;
+      margin: calc(var(--s-3) * -1 + 1px) 0 0 calc(var(--s-4) * -1 + 1px);
+    }
+    .activity-check {
+      width: 1.35rem;
+      height: 1.35rem;
+      margin: 0;
+    }
+  }
+  .activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .activity-body {
+    margin: 0 0 0.2rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+  }
+  .activity-type {
+    padding: 0.05rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--chip, var(--muted));
+    border: 1px solid currentColor;
+    border-radius: var(--r-pill);
+    corner-shape: round;
+  }
+  .activity-type[data-type='note'] {
+    --chip: var(--type-note);
+  }
+  .activity-type[data-type='call'] {
+    --chip: var(--type-call);
+  }
+  .activity-type[data-type='meeting'] {
+    --chip: var(--type-meeting);
+  }
+  .activity-type[data-type='task'] {
+    --chip: var(--type-task);
+  }
+
+  @keyframes activity-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes activity-leave {
+    from {
+      opacity: 1;
+      grid-template-rows: 1fr;
+    }
+    to {
+      opacity: 0;
+      grid-template-rows: 0fr;
+    }
+  }
+}

@@ -1,0 +1,113 @@
+/*
+  Design tokens: the only place raw colours, sizes, shadows and timings are decided.
+  Components read these variables; they never hard-code a palette value.
+  Dark values follow prefers-color-scheme.
+*/
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+
+    /* colour */
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --surface-2: #eceff3;
+    --border: #c9d2db;
+    --ink: #17202b;
+    --muted: #5d6b7a;
+    --accent: #2f5fd0;
+    --on-accent: #f4f6f8;
+    --danger: #c43b3b;
+    --success: #22a06b;
+    --option-ink: #17202b; /* native <option> text: some browsers draw the list on white */
+
+    /* translucent washes of the ink and accent colours (hover, columns, active nav) */
+    --tint-1: color-mix(in srgb, var(--ink) 4%, transparent);
+    --tint-2: color-mix(in srgb, var(--ink) 6%, transparent);
+    --tint-3: color-mix(in srgb, var(--ink) 8%, transparent);
+    --accent-tint: color-mix(in srgb, var(--accent) 14%, transparent);
+    --accent-tint-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+
+    /* deal stages and activity types */
+    --stage-lead: #7b8da6;
+    --stage-qualified: #3b82f6;
+    --stage-proposal: #8b5cf6;
+    --stage-negotiation: #f59e0b;
+    --stage-won: #22a06b;
+    --stage-lost: #e5534b;
+    --type-note: #7b8da6;
+    --type-call: #22a06b;
+    --type-meeting: #8b5cf6;
+    --type-task: #f59e0b;
+
+    /* spacing: 4px base */
+    --s-1: 0.25rem;
+    --s-2: 0.5rem;
+    --s-3: 0.75rem;
+    --s-4: 1rem;
+    --s-6: 1.5rem;
+    --s-8: 2rem;
+    --s-12: 3rem;
+
+    /* phone bottom tab bar: minimum height without the safe-area inset (pages/shell.css) */
+    --shell-nav-h: 4.25rem;
+
+    /* type scale */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+
+    /* radius (drawn as squircles where the browser supports corner-shape) */
+    --r-sm: 0.625rem;
+    --r-md: 0.875rem;
+    --r-lg: 1.25rem;
+    --r-xl: 1.75rem;
+    --r-pill: 999px;
+
+    /* elevation */
+    --shadow-1: 0 1px 2px rgb(16 24 40 / 0.05), 0 1px 3px rgb(16 24 40 / 0.08);
+    --shadow-2: 0 4px 12px rgb(16 24 40 / 0.08), 0 2px 4px rgb(16 24 40 / 0.05);
+    --shadow-3: 0 16px 40px rgb(16 24 40 / 0.18), 0 4px 12px rgb(16 24 40 / 0.08);
+
+    /* motion: animate transform, opacity and box-shadow only */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms;
+    --dur: 200ms;
+    --dur-slow: 320ms;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12161c;
+      --surface: #1a2029;
+      --surface-2: #1e2530;
+      --border: #2b3541;
+      --ink: #e8edf2;
+      --muted: #93a0ae;
+      --accent: #7fa2ff;
+      --on-accent: #12161c;
+      --danger: #ff8a8a;
+      --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.35);
+      --shadow-2: 0 4px 12px rgb(0 0 0 / 0.35), 0 2px 4px rgb(0 0 0 / 0.3);
+      --shadow-3: 0 16px 40px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.4);
+    }
+  }
+
+  /* reduced motion: every duration collapses, so no component needs its own override */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --dur-fast: 1ms;
+      --dur: 1ms;
+      --dur-slow: 1ms;
+    }
+  }
+
+  /* squircle corners (Chromium 139+); other browsers keep ordinary rounded corners */
+  @supports (corner-shape: squircle) {
+    :root {
+      --corner: squircle;
+    }
+  }
+}

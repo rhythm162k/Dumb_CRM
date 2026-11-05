@@ -1,0 +1,128 @@
+/* Form pieces: field, hint, error, search box, two-column row, dialog action bar. */
+@layer components {
+  .ui-field {
+    margin-bottom: 0.9rem;
+  }
+  .ui-field label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 550;
+  }
+  /* never shrink below the container */
+  .ui-field input,
+  .ui-field select,
+  .ui-field textarea {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .ui-field textarea {
+    resize: vertical;
+  }
+  /* focus ring fades in; the transparent outline keeps a visible ring in forced-colors mode */
+  .ui-field input:focus-visible,
+  .ui-field select:focus-visible,
+  .ui-field textarea:focus-visible {
+    outline: 2px solid transparent;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-tint);
+  }
+  .ui-field select option {
+    color: var(--option-ink);
+  }
+
+  .ui-hint {
+    margin: 0.3rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .ui-error {
+    margin: 0 0 0.9rem;
+    font-size: 0.875rem;
+    color: var(--danger);
+  }
+  .ui-error--inline {
+    margin: 0;
+  }
+
+  /* the toolbar (page.css) provides the space around it; full width until the toolbar is a row */
+  .ui-search {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0.55rem 0.7rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+  }
+  @container ui-page (min-width: 40rem) {
+    .ui-search {
+      flex: 1 1 16rem;
+      max-width: 26rem;
+    }
+  }
+  .ui-search:focus-visible {
+    outline: 2px solid transparent;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-tint);
+  }
+
+  /* two fields side by side once the dialog is wide enough */
+  .ui-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+  @container ui-sheet (min-width: 26rem) {
+    .ui-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* button bar at the bottom of a form; sticks to the bottom of a scrolling dialog */
+  .ui-actions {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+    padding: 0.6rem 0 0.25rem;
+    background: var(--surface);
+  }
+  .ui-actions--static {
+    position: static;
+    padding: 0;
+    background: none;
+  }
+  /* pushes a button (Delete) to the left edge of the bar */
+  .ui-actions__start {
+    margin-right: auto;
+  }
+
+  @media (pointer: coarse) {
+    /* 16px inputs so iOS Safari does not zoom */
+    .ui-field input,
+    .ui-field select,
+    .ui-field textarea,
+    .ui-search {
+      font-size: 16px;
+      min-height: 44px;
+    }
+    .ui-field textarea {
+      min-height: 5.5rem;
+    }
+  }
+}

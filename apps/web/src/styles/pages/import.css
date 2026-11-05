@@ -1,0 +1,190 @@
+/*
+  CSV import dialog (prefix import-): a three-step stepper, the step content (fades in when the
+  step changes), the file picker, the column mapping grid and the result lists.
+  Page-layer rules beat the shared field rules on the same element, so .import-file and
+  .import-option can restyle the plain file and radio inputs they own.
+*/
+@layer pages {
+  .import-steps {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin: 0 0 var(--s-4);
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+    font-weight: 550;
+    color: var(--muted);
+  }
+  .import-steps__item {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    gap: var(--s-2);
+    min-width: 0;
+    white-space: nowrap;
+  }
+  .import-steps__item:last-child {
+    flex: 0 0 auto;
+  }
+  /* the line to the next step */
+  .import-steps__item:not(:last-child)::after {
+    content: '';
+    flex: 1 1 0;
+    min-width: var(--s-2);
+    height: 2px;
+    margin-right: var(--s-1);
+    background: var(--border);
+    border-radius: var(--r-pill);
+    corner-shape: round;
+  }
+  .import-steps__item[data-done]::after {
+    background: var(--accent);
+  }
+  .import-steps__dot {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    corner-shape: round;
+  }
+  .import-steps__item[data-done] {
+    color: var(--ink);
+  }
+  .import-steps__item[data-done] .import-steps__dot {
+    color: var(--accent);
+    background: var(--accent-tint);
+    border-color: transparent;
+  }
+  .import-steps__item[aria-current='step'] {
+    color: var(--ink);
+  }
+  .import-steps__item[aria-current='step'] .import-steps__dot {
+    color: var(--on-accent);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .import-step {
+    animation: import-in var(--dur) var(--ease-out) backwards;
+  }
+
+  /* file picker: a dashed drop area (dropping a file on a file input works natively) */
+  .import-file {
+    padding: var(--s-6) var(--s-4);
+    cursor: pointer;
+    background: var(--surface-2);
+    border: 1.5px dashed var(--border);
+    border-radius: var(--r-md);
+  }
+  .import-file::file-selector-button {
+    margin-right: var(--s-3);
+    padding: 0.45rem 0.9rem;
+    font: inherit;
+    font-weight: 550;
+    color: var(--on-accent);
+    background: var(--accent);
+    border: 0;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+  }
+
+  /* column mapping: one column, two from a sheet wide enough for it */
+  .import-map {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--s-3);
+  }
+  @container ui-sheet (min-width: 30rem) {
+    .import-map {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* duplicate handling: two selectable rows */
+  .import-dupes {
+    margin: 0 0 var(--s-4);
+    padding: 0;
+    border: 0;
+  }
+  .import-dupes legend {
+    padding: 0;
+    margin-bottom: var(--s-2);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .import-option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-3);
+    margin: 0 0 var(--s-2);
+    padding: var(--s-3);
+    font-size: 0.9rem;
+    font-weight: 400;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .import-option input {
+    flex: none;
+    display: block;
+    width: 1.1rem;
+    height: 1.1rem;
+    min-height: 0;
+    margin: 0.1rem 0 0;
+    padding: 0;
+    accent-color: var(--accent);
+  }
+  .import-option:has(input:checked) {
+    background: var(--accent-tint-soft);
+    border-color: var(--accent);
+  }
+  .import-option:has(input:focus-visible) {
+    box-shadow: 0 0 0 3px var(--accent-tint);
+  }
+
+  .import-summary {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0 0 var(--s-4);
+    padding: var(--s-4);
+    list-style: none;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .import-heading {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+  .import-errors {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0 0 var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    list-style: none;
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+    background: color-mix(in srgb, var(--danger) 8%, transparent);
+    border-radius: var(--r-md);
+  }
+
+  @keyframes import-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

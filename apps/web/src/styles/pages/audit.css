@@ -1,0 +1,20 @@
+/*
+  Audit log page (prefix audit-). The filters stack on narrow pages and sit in a row from
+  container 30rem, like the toolbar on the other list pages.
+*/
+@layer pages {
+  .audit-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-3);
+    margin: var(--s-3) 0 var(--s-4);
+  }
+  .audit-filters > * {
+    margin: 0;
+  }
+  @container ui-page (min-width: 30rem) {
+    .audit-filters {
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 14rem));
+    }
+  }
+}

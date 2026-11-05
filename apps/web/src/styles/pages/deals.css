@@ -1,0 +1,253 @@
+/*
+  Deals board (prefix deals-). A grid, never a scrolling row:
+    1 column on phones, 2 from container 26rem, 3 from 40rem, all 6 stages from 76rem.
+  Columns are as tall as their own content (align-items: start), so an empty column stays short
+  and keeps a dashed drop zone. Added cards fade in, deleted cards fade out and collapse.
+*/
+@layer pages {
+  .deals-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--s-3);
+  }
+
+  .deals-column {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--tint-1);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+  }
+  /* drop target: a soft accent wash fades in behind the cards while a card is dragged over */
+  .deals-column::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--accent-tint-soft);
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px var(--accent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur) var(--ease-out);
+  }
+  .deals-column[data-over='true']::after {
+    opacity: 1;
+  }
+
+  .deals-column__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-1) var(--s-2);
+    padding: var(--s-3) var(--s-3) var(--s-1);
+  }
+  .deals-column__head h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .deals-column__head h2::before {
+    content: '';
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    corner-shape: round;
+    background: var(--stage, var(--muted));
+  }
+  .deals-column__total {
+    font-size: var(--text-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .deals-column[data-stage='lead'] {
+    --stage: var(--stage-lead);
+  }
+  .deals-column[data-stage='qualified'] {
+    --stage: var(--stage-qualified);
+  }
+  .deals-column[data-stage='proposal'] {
+    --stage: var(--stage-proposal);
+  }
+  .deals-column[data-stage='negotiation'] {
+    --stage: var(--stage-negotiation);
+  }
+  .deals-column[data-stage='won'] {
+    --stage: var(--stage-won);
+  }
+  .deals-column[data-stage='lost'] {
+    --stage: var(--stage-lost);
+  }
+
+  .deals-column__body {
+    display: grid;
+    align-content: start;
+    padding: var(--s-2);
+  }
+  /* empty column: a short dashed drop zone, so a card can still be dropped here */
+  .deals-column__empty {
+    display: grid;
+    place-items: center;
+    min-height: 4.25rem;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+    border: 1.5px dashed var(--border);
+    border-radius: var(--r-md);
+  }
+
+  /*
+    One slot per card. The slot is what fades in and out; the grid-template-rows 1fr -> 0fr
+    animation is the one place layout is animated (it makes the column close the gap smoothly).
+  */
+  .deals-slot {
+    display: grid;
+    grid-template-rows: 1fr;
+  }
+  .deals-slot__inner {
+    min-height: 0;
+    padding-bottom: var(--s-2);
+  }
+  .deals-slot:last-child > .deals-slot__inner {
+    padding-bottom: 0;
+  }
+  .deals-slot[data-enter] {
+    animation: deals-in var(--dur) var(--ease-out) backwards;
+  }
+  .deals-slot[data-state='leaving'] {
+    pointer-events: none;
+    animation: deals-leave var(--dur-slow) var(--ease-out) both;
+  }
+  .deals-slot[data-state='leaving'] > .deals-slot__inner {
+    overflow: hidden;
+  }
+
+  .deals-card {
+    display: grid;
+    gap: 0.2rem;
+    padding: var(--s-3);
+    cursor: grab;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-1);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .deals-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-2);
+    }
+  }
+  .deals-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  /* the instant the drag starts the card looks lifted (that is what the drag ghost copies) ... */
+  .deals-card[data-dragging='lifted'] {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-2);
+    cursor: grabbing;
+    transition: none;
+  }
+  /* ... then the card left behind turns into a faint placeholder */
+  .deals-card[data-dragging='placeholder'] {
+    opacity: 0.4;
+    box-shadow: none;
+    transform: none;
+    cursor: grabbing;
+  }
+  .deals-card__title {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+  .deals-card__meta {
+    font-size: var(--text-sm);
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .deals-card__value {
+    font-variant-numeric: tabular-nums;
+  }
+  /* touch screens cannot drag, so each card gets a stage picker there */
+  .deals-card__move {
+    display: none;
+    width: 100%;
+    margin-top: var(--s-2);
+    padding: 0.4rem 0.5rem;
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+  }
+  .deals-card__move option {
+    color: var(--option-ink);
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .deals-card__move {
+      display: block;
+    }
+    .deals-card {
+      cursor: pointer;
+    }
+  }
+  @media (pointer: coarse) {
+    .deals-card__move {
+      font-size: 16px;
+      min-height: 44px;
+    }
+  }
+
+  @container ui-page (min-width: 26rem) {
+    .deals-board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @container ui-page (min-width: 40rem) {
+    .deals-board {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @container ui-page (min-width: 76rem) {
+    .deals-board {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  @keyframes deals-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes deals-leave {
+    from {
+      opacity: 1;
+      grid-template-rows: 1fr;
+    }
+    to {
+      opacity: 0;
+      grid-template-rows: 0fr;
+    }
+  }
+}

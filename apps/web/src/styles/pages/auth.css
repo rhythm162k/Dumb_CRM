@@ -1,0 +1,79 @@
+/* Sign in, register, forgot/reset password, verify email (prefix auth-). */
+@layer pages {
+  .auth-page {
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+    padding: max(var(--s-4), env(safe-area-inset-top)) max(var(--s-4), env(safe-area-inset-right))
+      max(var(--s-4), env(safe-area-inset-bottom)) max(var(--s-4), env(safe-area-inset-left));
+    background: radial-gradient(60rem 28rem at 50% -8%, var(--accent-tint-soft), transparent 70%);
+  }
+
+  /* one centered card; everything in it is centered, inputs go back to left-aligned */
+  .auth-card {
+    width: 100%;
+    max-width: 26rem;
+    padding: var(--s-6);
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-2);
+    animation: auth-in var(--dur-slow) var(--ease-out) both;
+  }
+  .auth-card form {
+    margin-top: var(--s-4);
+    text-align: left;
+  }
+  .auth-title {
+    margin: var(--s-4) 0 var(--s-1);
+    font-size: var(--text-xl);
+    letter-spacing: -0.02em;
+  }
+  .auth-subtitle {
+    margin: 0 0 var(--s-4);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .auth-footer {
+    margin: var(--s-6) 0 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+  .auth-aside {
+    margin: var(--s-4) 0 0;
+    font-size: var(--text-sm);
+  }
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin: var(--s-4) 0;
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  @media (min-width: 40rem) {
+    .auth-card {
+      padding: var(--s-8);
+    }
+  }
+
+  @keyframes auth-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

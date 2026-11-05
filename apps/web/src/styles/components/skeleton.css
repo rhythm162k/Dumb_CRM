@@ -1,0 +1,59 @@
+/*
+  Skeleton placeholders. Grey shapes with a soft shimmer (a gradient swept across with transform).
+  They fade in after a short delay, so a fast load never flashes them. Reduced motion: no shimmer.
+  Every .ui-skeleton needs one shape: --line, --block or --round. Size it with width/height.
+*/
+@layer components {
+  .ui-skeleton {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    background: var(--tint-2);
+    animation: ui-skeleton-in var(--dur) var(--ease-out) var(--dur-fast) backwards;
+  }
+  .ui-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--tint-3), transparent);
+    transform: translateX(-100%);
+    animation: ui-shimmer 1.5s ease-in-out infinite;
+  }
+  .ui-skeleton--line {
+    height: 0.9rem;
+    border-radius: var(--r-pill);
+    corner-shape: round;
+  }
+  .ui-skeleton--block {
+    height: 4.5rem;
+    border-radius: var(--r-md);
+  }
+  .ui-skeleton--round {
+    border-radius: 50%;
+    corner-shape: round;
+  }
+
+  /* vertical rhythm between placeholders */
+  .ui-skeleton-stack {
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ui-skeleton::after {
+      display: none;
+    }
+  }
+
+  @keyframes ui-skeleton-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes ui-shimmer {
+    to {
+      transform: translateX(100%);
+    }
+  }
+}

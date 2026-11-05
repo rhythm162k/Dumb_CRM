@@ -1,0 +1,81 @@
+/*
+  Toasts. The stack is a manual popover (top layer), so it also shows above an open dialog.
+  The UA popover styles (centred, bordered box) are reset here.
+*/
+@layer components {
+  .ui-toasts {
+    position: fixed;
+    inset: auto var(--s-4) calc(5rem + env(safe-area-inset-bottom)) var(--s-4);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-2);
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    color: inherit;
+    background: none;
+    border: 0;
+    pointer-events: none;
+  }
+  .ui-toast {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    max-width: min(26rem, 100%);
+    padding: var(--s-3) var(--s-4);
+    font-size: var(--text-sm);
+    font-weight: 550;
+    color: var(--bg);
+    background: var(--ink);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-3);
+    animation: ui-toast-in var(--dur) var(--ease-out) both;
+  }
+  .ui-toast::before {
+    content: '';
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--success);
+    border-radius: 50%;
+    corner-shape: round;
+  }
+  .ui-toast[data-tone='danger']::before {
+    background: var(--danger);
+  }
+  .ui-toast[data-state='leaving'] {
+    animation: ui-toast-out var(--dur) var(--ease-out) both;
+  }
+
+  @media (min-width: 48rem) {
+    .ui-toasts {
+      inset: auto var(--s-6) var(--s-6) auto;
+      align-items: flex-end;
+    }
+  }
+
+  @keyframes ui-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes ui-toast-out {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+    to {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.98);
+    }
+  }
+}

@@ -1,0 +1,31 @@
+/* Card: a raised surface. Add --interactive when the whole card is clickable. */
+@layer components {
+  .ui-card {
+    padding: var(--s-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-1);
+  }
+  @media (min-width: 40rem) {
+    .ui-card {
+      padding: var(--s-6);
+    }
+  }
+
+  .ui-card--interactive {
+    cursor: pointer;
+    transition:
+      transform var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .ui-card--interactive:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-2);
+    }
+  }
+  .ui-card--interactive:active {
+    transform: scale(0.99);
+  }
+}

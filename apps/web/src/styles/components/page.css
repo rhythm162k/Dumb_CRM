@@ -1,0 +1,81 @@
+/* Page container (named "ui-page" for container queries), page header and the toolbar under it. */
+@layer components {
+  /* centered on wide screens; only the deals board opts out with --wide */
+  .ui-page {
+    container: ui-page / inline-size;
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding: 1rem;
+  }
+  .ui-page--wide {
+    max-width: none;
+  }
+  /* a page fades in when you navigate to it (opacity only: no containing block for fixed children) */
+  .ui-page {
+    animation: ui-page-in var(--dur) var(--ease-out) backwards;
+  }
+  @keyframes ui-page-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @media (min-width: 40rem) {
+    .ui-page {
+      padding: 1.25rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .ui-page {
+      padding: 1.5rem;
+    }
+  }
+  @media (min-width: 80rem) {
+    .ui-page {
+      padding: 2rem;
+    }
+  }
+
+  .ui-page__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .ui-page__head h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+  /*
+    Toolbar under the page header: search (or filters) on the left, actions on the right.
+    Stacked on narrow pages (search full width, actions below), one row from container 40rem.
+  */
+  .ui-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
+  .ui-toolbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  @container ui-page (min-width: 40rem) {
+    .ui-toolbar {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ui-toolbar__actions {
+      margin-left: auto;
+      justify-content: flex-end;
+    }
+  }
+}

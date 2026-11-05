@@ -1,0 +1,264 @@
+/*
+  App shell (prefix shell-): sticky top bar + bottom tab bar on phones, left sidebar from md.
+  Breakpoints (Tailwind values): md 48rem, lg 64rem.
+  Careful: never put backdrop-filter, filter or transform on .shell-sidebar. They would make it
+  the containing block of the fixed tab bar inside it. The blurred top bar uses ::before instead.
+*/
+@layer pages {
+  .shell-root {
+    display: block;
+    min-height: 100vh; /* fallback for browsers without dvh */
+    min-height: 100dvh;
+  }
+
+  /* ---------- phones: top bar ---------- */
+  .shell-sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-3) max(var(--s-4), env(safe-area-inset-right)) var(--s-3)
+      max(var(--s-4), env(safe-area-inset-left));
+    padding-top: calc(var(--s-3) + env(safe-area-inset-top));
+    border-bottom: 1px solid var(--border);
+  }
+  .shell-sidebar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+  }
+  .shell-sidebar__brand {
+    min-width: 0;
+  }
+  .shell-workspace {
+    margin: 0;
+    max-width: 55vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+  .shell-sidebar__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    font-size: var(--text-sm);
+  }
+  .shell-sidebar__email {
+    display: none;
+    color: var(--muted);
+  }
+
+  /* ---------- phones: bottom tab bar ---------- */
+  .shell-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    display: flex;
+    gap: var(--s-1);
+    min-height: calc(var(--shell-nav-h) + env(safe-area-inset-bottom));
+    padding: var(--s-1) max(var(--s-2), env(safe-area-inset-right))
+      calc(var(--s-1) + env(safe-area-inset-bottom)) max(var(--s-2), env(safe-area-inset-left));
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-top: 1px solid var(--border);
+  }
+
+  /* one nav link: icon + label. Tab on phones, pill in the sidebar. */
+  .shell-link {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    padding: var(--s-2) var(--s-1);
+    font-size: var(--text-xs);
+    font-weight: 550;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: var(--r-sm);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .shell-link:active {
+    transform: scale(0.96);
+  }
+  .shell-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .shell-link[aria-current='page'] {
+    color: var(--accent);
+  }
+  .shell-link__icon {
+    flex: none;
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  .shell-link__label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* active indicator: a short bar on top of the tab; grows in when the link becomes current */
+  .shell-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1.5rem;
+    height: 3px;
+    background: var(--accent);
+    border-radius: var(--r-pill);
+    corner-shape: round;
+    opacity: 0;
+    transform: translateX(-50%) scaleX(0.4);
+    transition:
+      opacity var(--dur) var(--ease-out),
+      transform var(--dur) var(--ease-out);
+  }
+  .shell-link[aria-current='page']::before {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  .shell-main {
+    min-width: 0;
+  }
+  /* room for the fixed tab bar (+ breathing space): a real block at the end of the content, so the
+     scroll area always extends past the last item */
+  .shell-main::after {
+    content: '';
+    display: block;
+    height: calc(var(--shell-nav-h) + env(safe-area-inset-bottom) + var(--s-4));
+  }
+  .shell-banner {
+    padding: var(--s-3) var(--s-4);
+    font-size: var(--text-sm);
+    border-bottom: 1px solid var(--border);
+    background: var(--accent-tint-soft);
+  }
+
+  @media (min-width: 40rem) {
+    .shell-banner {
+      padding-inline: var(--s-6);
+    }
+  }
+
+  /* ---------- md and up: left sidebar ---------- */
+  @media (min-width: 48rem) {
+    .shell-root {
+      display: grid;
+      grid-template-columns: 13.75rem minmax(0, 1fr);
+    }
+    .shell-sidebar {
+      align-self: start;
+      height: 100dvh;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: var(--s-6);
+      padding: var(--s-6) var(--s-3) var(--s-4);
+      overflow-y: auto;
+      background: var(--surface);
+      border-bottom: 0;
+      border-right: 1px solid var(--border);
+    }
+    .shell-sidebar::before {
+      display: none;
+    }
+    .shell-sidebar__brand {
+      padding-inline: var(--s-3);
+    }
+    .shell-workspace {
+      max-width: none;
+      margin-top: var(--s-1);
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .shell-nav {
+      position: static;
+      flex-direction: column;
+      gap: var(--s-1);
+      padding: 0;
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      border-top: 0;
+      min-height: 0;
+    }
+    .shell-link {
+      flex: none;
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: var(--s-3);
+      padding: var(--s-2) var(--s-3);
+      font-size: var(--text-sm);
+      color: var(--ink);
+    }
+    .shell-link:hover {
+      background: var(--tint-2);
+    }
+    .shell-link[aria-current='page'] {
+      color: var(--accent);
+      background: var(--accent-tint);
+    }
+    .shell-link__icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    /* active indicator: a bar on the left edge of the pill */
+    .shell-link::before {
+      top: 50%;
+      left: 0;
+      width: 3px;
+      height: 1.1rem;
+      transform: translateY(-50%) scaleY(0.4);
+    }
+    .shell-link[aria-current='page']::before {
+      transform: translateY(-50%) scaleY(1);
+    }
+    .shell-sidebar__foot {
+      display: grid;
+      margin-top: auto;
+      gap: var(--s-3);
+      padding: var(--s-3) var(--s-3) 0;
+      border-top: 1px solid var(--border);
+      overflow-wrap: anywhere;
+    }
+    .shell-sidebar__email {
+      display: block;
+      font-size: var(--text-xs);
+    }
+    .shell-main::after {
+      display: none;
+    }
+  }
+  @media (min-width: 64rem) {
+    .shell-root {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+  }
+
+  /* touch screens: comfortable targets */
+  @media (pointer: coarse) {
+    .shell-link {
+      min-height: 44px;
+    }
+  }
+}

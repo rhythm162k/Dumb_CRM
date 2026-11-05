@@ -1,0 +1,54 @@
+/* Small text and label helpers shared by every page. */
+@layer components {
+  .ui-muted {
+    color: var(--muted);
+  }
+  .ui-small {
+    font-size: 0.8rem;
+  }
+  .ui-empty {
+    padding: 2rem 0;
+    color: var(--muted);
+  }
+  /* empty list page: a centred dashed box instead of loose text */
+  .ui-empty--card {
+    margin: 0;
+    padding: var(--s-12) var(--s-4);
+    text-align: center;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--r-lg);
+  }
+  .ui-overdue {
+    color: var(--danger);
+    font-weight: 550;
+  }
+  .ui-chip {
+    display: inline-block;
+    margin: 0 0.25rem 0.25rem 0;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    corner-shape: round;
+  }
+  /* text for screen readers only (loading labels) */
+  .ui-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
+    border: 0;
+  }
+  .ui-brand {
+    font-weight: 650;
+    font-size: 1.15rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+}

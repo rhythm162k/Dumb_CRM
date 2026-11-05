@@ -1,0 +1,55 @@
+/*
+  Base layer: the ONLY file that may use bare element selectors (html, body, a, ...).
+  Everything else is styled through prefixed classes.
+*/
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    corner-shape: var(--corner, round);
+  }
+
+  html {
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* phones: a focused field or scrollIntoView target must not land behind the bottom tab bar */
+  @media (max-width: 47.9999rem) {
+    html {
+      scroll-padding-bottom: calc(
+        var(--shell-nav-h) + env(safe-area-inset-bottom) + var(--s-4)
+      );
+    }
+  }
+
+  /* stop the page scrolling behind an open dialog */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  /* min-height, not height: a fixed 100% box makes iOS Safari cut the scroll area short */
+  body,
+  #root {
+    min-height: 100vh; /* fallback for browsers without dvh (older Android WebView) */
+    min-height: 100dvh;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family:
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--accent);
+  }
+}

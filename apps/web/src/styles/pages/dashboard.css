@@ -1,0 +1,150 @@
+/*
+  Dashboard home page (prefix dash-). The stat tiles and panels are .ui-card elements (surface,
+  shadow, radius, padding come from the card); this file only lays them out.
+  The stage bars grow from the left when the data arrives (transform only, staggered by --i).
+*/
+@layer pages {
+  .dash-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--s-4);
+    margin-bottom: var(--s-4);
+  }
+  .dash-stat,
+  .dash-panel {
+    min-width: 0;
+    animation: dash-in var(--dur) var(--ease-out) backwards;
+  }
+  .dash-stat h2,
+  .dash-panel h2 {
+    margin: 0 0 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .dash-stat__value {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .dash-stat__note {
+    margin: 0.25rem 0 0;
+  }
+  .dash-panel {
+    margin-bottom: var(--s-4);
+  }
+  .dash-panel__empty {
+    padding: 0.5rem 0;
+  }
+
+  .dash-stages,
+  .dash-overdue {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .dash-stage {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr) 2rem;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  .dash-stage__name {
+    min-width: 0;
+  }
+  .dash-stage__bar {
+    height: 0.55rem;
+    border-radius: var(--r-pill);
+    corner-shape: round;
+    background: var(--tint-3);
+    overflow: hidden;
+  }
+  .dash-stage__bar > span {
+    display: block;
+    height: 100%;
+    border-radius: var(--r-pill);
+    corner-shape: round;
+    background: var(--stage, var(--accent));
+    transform-origin: left center;
+    animation: dash-grow var(--dur-slow) var(--ease-out) backwards;
+    animation-delay: calc(var(--i, 0) * var(--dur-fast) / 3);
+  }
+  .dash-stage__count {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .dash-stage__value {
+    grid-column: 2 / -1;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .dash-stage__value:empty {
+    display: none;
+  }
+  .dash-stage[data-stage='lead'] {
+    --stage: var(--stage-lead);
+  }
+  .dash-stage[data-stage='qualified'] {
+    --stage: var(--stage-qualified);
+  }
+  .dash-stage[data-stage='proposal'] {
+    --stage: var(--stage-proposal);
+  }
+  .dash-stage[data-stage='negotiation'] {
+    --stage: var(--stage-negotiation);
+  }
+  .dash-stage[data-stage='won'] {
+    --stage: var(--stage-won);
+  }
+  .dash-stage[data-stage='lost'] {
+    --stage: var(--stage-lost);
+  }
+
+  .dash-overdue li {
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .dash-overdue li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  .dash-overdue__text {
+    margin: 0 0 0.15rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+  .dash-overdue__meta {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  @keyframes dash-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes dash-grow {
+    from {
+      transform: scaleX(0);
+    }
+  }
+}

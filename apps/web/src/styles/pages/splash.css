@@ -1,0 +1,99 @@
+/* Splash screen shown while the API wakes up (prefix splash-). */
+@layer pages {
+  .splash-page {
+    min-height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+  }
+  .splash-page h1 {
+    margin: 0.5rem 0 0;
+    font-size: 2rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+  .splash-page p {
+    margin: 0;
+    max-width: 34ch;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* three people being connected, one line at a time */
+  .splash-web {
+    position: relative;
+    width: 168px;
+    height: 56px;
+  }
+  .splash-links {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .splash-links path {
+    stroke: var(--accent);
+    stroke-width: 2;
+    fill: none;
+    stroke-dasharray: 66;
+    stroke-dashoffset: 66;
+    animation: splash-draw 2.4s ease-in-out infinite;
+  }
+  .splash-links path:nth-child(2) {
+    animation-delay: 1.2s;
+  }
+  .splash-node {
+    position: absolute;
+    top: 10px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    corner-shape: round;
+    background: var(--bg);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .splash-node--1 {
+    left: 0;
+  }
+  .splash-node--2 {
+    left: 66px;
+  }
+  .splash-node--3 {
+    right: 0;
+  }
+  .splash-web[data-failed='true'] .splash-links path {
+    animation: none;
+    stroke: var(--border);
+    stroke-dasharray: 4 6;
+    stroke-dashoffset: 0;
+  }
+  /* reduced motion: the two links are simply drawn, nothing loops */
+  @media (prefers-reduced-motion: reduce) {
+    .splash-links path {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes splash-draw {
+    0% {
+      stroke-dashoffset: 66;
+    }
+    45%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .splash-links path {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+}

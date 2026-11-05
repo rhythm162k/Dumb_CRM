@@ -1,0 +1,16 @@
+/* Pagination bar: centered below a list. */
+@layer components {
+  .ui-pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--s-4);
+    margin-top: var(--s-6);
+  }
+  .ui-pager__status {
+    min-width: 6.5rem;
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+}

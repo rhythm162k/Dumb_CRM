@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: crm
+      POSTGRES_PASSWORD: crm
+      POSTGRES_DB: crm
+    ports: ['5433:5432']
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U crm']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    profiles: ['full']
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://crm:crm@db:5432/crm
+      WEB_ORIGIN: http://localhost:5173
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?set JWT_ACCESS_SECRET in .env}
+    ports: ['4000:4000']
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  pgdata:
