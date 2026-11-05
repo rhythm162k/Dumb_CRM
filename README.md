@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧩 Dumb CRM
+<img src="./apps/web/public/images/favicon.png" alt="Dumb CRM logo" width="280" />
 
 ### A focused, multi-tenant CRM for managing customer relationships and sales workflows.
 
