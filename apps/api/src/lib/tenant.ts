@@ -57,6 +57,8 @@ export async function openTenantScope(db: Db, workspaceId: string) {
       try {
         await tx.execute(sql.raw(`set local role ${TENANT_ROLE}`));
         await tx.execute(sql`select set_config('app.workspace_id', ${workspaceId}, true)`);
+        // a stuck query must not hold a pooled connection (and so the whole API) forever
+        await tx.execute(sql.raw(`set local statement_timeout = '30s'`));
       } catch (err) {
         failed(err);
         throw err;

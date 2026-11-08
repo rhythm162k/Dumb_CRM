@@ -15,6 +15,7 @@ import { VerifyEmail } from './pages/VerifyEmail';
 import { Splash } from './Splash';
 import { ConfirmProvider, ToastProvider } from './ui';
 import { useApiReady } from './useApiReady';
+import { WakeBanner } from './WakeBanner';
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -29,11 +30,12 @@ function GuestOnly({ children }: { children: ReactNode }) {
 }
 
 export function App() {
-  const { status, retry } = useApiReady();
-  if (status !== 'ready') return <Splash status={status} onRetry={retry} />;
+  const { status, seconds, retry } = useApiReady();
+  if (status !== 'ready') return <Splash status={status} seconds={seconds} onRetry={retry} />;
 
   return (
     <BrowserRouter>
+      <WakeBanner />
       <AuthProvider>
         <ToastProvider>
           <ConfirmProvider>

@@ -39,6 +39,17 @@ export function createApp({ config, db, email, google, checkDb }: AppDeps) {
   app.use(cors({ origin: config.WEB_ORIGIN, credentials: true }));
 
   // health first: polled by the splash screen, must not be rate limited
+  // /live only proves the process answers (use it as the platform's health check path); /health also
+  // checks the database (the splash screen uses it). A slow database must not make the platform
+  // think the whole service is dead and restart it.
+  app.get('/live', (_req, res) => {
+    res.set('Cache-Control', 'no-store');
+    res.json({ status: 'ok' });
+  });
+  app.use(['/health', '/api/health'], (_req, res, next) => {
+    res.set('Cache-Control', 'no-store'); // a proxy must never answer "is the API awake?" from a cache
+    next();
+  });
   app.use(['/health', '/api/health'], healthRouter(checkDb));
 
   if (config.DEBUG_CLIENT_IP) {

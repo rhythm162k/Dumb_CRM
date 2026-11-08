@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseTrustProxy } from './lib/proxy';
 
 // dotenv gives '' for empty variables, treat that as "not set"
 const optional = z
@@ -16,7 +17,18 @@ const schema = z
     DATABASE_SSL: z.enum(['off', 'require', 'verify']).default('off'),
     DB_POOL_MAX: z.coerce.number().int().min(1).max(50).default(10),
     // how many reverse proxies sit in front of the API; decides which client IP rate limits use
-    TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(1),
+    // a number of proxies (0 to 5), or `render` to trust Render's network and Cloudflare by address
+    TRUST_PROXY: z
+      .string()
+      .default('1')
+      .transform((value, ctx) => {
+        const parsed = parseTrustProxy(value);
+        if (parsed === undefined) {
+          ctx.addIssue({ code: 'custom', message: "Use a number from 0 to 5, or 'render'" });
+          return z.NEVER;
+        }
+        return parsed;
+      }),
     // temporary: logs req.ip and X-Forwarded-For per /api request, to verify TRUST_PROXY after deploying
     DEBUG_CLIENT_IP: z
       .enum(['true', 'false'])

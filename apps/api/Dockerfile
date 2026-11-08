@@ -20,4 +20,4 @@ COPY --from=build /app/apps/api/dist apps/api/dist
 COPY --from=build /app/apps/api/drizzle apps/api/drizzle
 USER node
 EXPOSE 4000
-CMD ["sh", "-c", "node apps/api/dist/db/migrate.js && node apps/api/dist/server.js"]
+CMD ["sh", "-c", "node apps/api/dist/db/migrate.js && exec node apps/api/dist/server.js"]

@@ -1,3 +1,5 @@
+import { ensureAwake, markAlive } from './wake';
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -23,13 +25,17 @@ export async function api<T = void>(
   path: string,
   options: { method?: string; body?: unknown } = {},
 ): Promise<T> {
-  const send = () =>
-    fetch(`/api${path}`, {
+  await ensureAwake(); // after a long idle the free server sleeps: wake it first instead of failing
+  const send = async () => {
+    const response = await fetch(`/api${path}`, {
       method: options.method ?? 'GET',
       credentials: 'include',
       headers: options.body !== undefined ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
     });
+    if (response.status < 500) markAlive();
+    return response;
+  };
 
   let res = await send();
   if (res.status === 401 && !NO_REFRESH.has(path)) {
@@ -53,7 +59,12 @@ export async function api<T = void>(
 
 /** Downloads a file from the API (e.g. a CSV export) through the browser's save mechanism. */
 export async function downloadFile(path: string, fallbackName = 'export.csv'): Promise<void> {
-  const send = () => fetch(`/api${path}`, { credentials: 'include' });
+  await ensureAwake();
+  const send = async () => {
+    const response = await fetch(`/api${path}`, { credentials: 'include' });
+    if (response.status < 500) markAlive();
+    return response;
+  };
   let res = await send();
   if (res.status === 401) {
     const refreshed = await fetch('/api/auth/refresh', { method: 'POST', credentials: 'include' });

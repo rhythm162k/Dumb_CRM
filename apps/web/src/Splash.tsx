@@ -1,6 +1,20 @@
 import type { ApiStatus } from './useApiReady';
 
-export function Splash({ status, onRetry }: { status: ApiStatus; onRetry: () => void }) {
+function message(seconds: number) {
+  if (seconds < 20) return 'Waking up your workspace. The first visit can take up to a minute.';
+  if (seconds < 90) return 'Still starting. The free server needs a little longer than usual.';
+  return 'Taking longer than usual, but it is still trying. You do not need to do anything.';
+}
+
+export function Splash({
+  status,
+  seconds = 0,
+  onRetry,
+}: {
+  status: ApiStatus;
+  seconds?: number;
+  onRetry: () => void;
+}) {
   const failed = status === 'failed';
   return (
     <main className="splash-page">
@@ -16,13 +30,16 @@ export function Splash({ status, onRetry }: { status: ApiStatus; onRetry: () => 
       <img src="/images/favicon.png" alt="dumb-logo" width={48} />
       {failed ? (
         <>
-          <p>The server didn’t respond. Check your connection and try again.</p>
+          <p>The server did not wake up after several minutes. Please try again in a minute.</p>
           <button className="ui-btn ui-btn--primary" onClick={onRetry}>
             Try again
           </button>
         </>
       ) : (
-        <p role="status">Waking up your workspace. The first visit can take up to a minute.</p>
+        <>
+          <p role="status">{message(seconds)}</p>
+          {seconds >= 5 && <p aria-hidden="true">Waiting {seconds}s</p>}
+        </>
       )}
     </main>
   );

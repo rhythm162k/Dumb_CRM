@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { createApp } from './app';
 import { loadConfig } from './config';
 import { createDb } from './db/client';
+import { applyServerTimeouts } from './lib/server-timeouts';
 import { createEmailService } from './services/email';
 import { createGoogleClient } from './services/google';
 
@@ -32,10 +33,15 @@ const server = app.listen(config.PORT, () => {
   if (!config.GOOGLE_CLIENT_ID) console.log('Google sign-in: not configured');
 });
 
+applyServerTimeouts(server);
+
 function shutdown() {
+  // never hang: the platform force-kills a container that takes too long to stop
+  setTimeout(() => process.exit(1), 10_000).unref();
   server.close(() => {
     pool.end().finally(() => process.exit(0));
   });
+  server.closeIdleConnections(); // do not wait for idle keep-alive connections
 }
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);

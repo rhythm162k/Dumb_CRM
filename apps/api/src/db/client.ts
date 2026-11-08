@@ -32,7 +32,12 @@ export function createDb(connectionString: string, opts: { ssl?: DbSsl; max?: nu
     ...connectionOptions(connectionString, opts.ssl),
     max: opts.max ?? 10,
     idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 10_000, // fail fast instead of hanging when the database is unreachable
+    // generous: the first connection after a wake-up crosses the internet and does a TLS handshake,
+    // but it still fails fast instead of hanging forever when the database is unreachable
+    connectionTimeoutMillis: 20_000,
+    // TCP keep-alive stops idle connections from being silently dropped by the pooler or the network
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10_000,
   });
   // A connection that the database or pooler drops while idle emits 'error' on the pool.
   // Without a listener Node treats it as an uncaught exception and the whole API crashes.
